@@ -1,0 +1,43 @@
+sudo su
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install nginx mariadb-server php-fpm php-mysql
+php --version
+mysql --version
+sudo mysql_secure_installation
+sudo mysql -u root -p
+create database ak_db default character set utf8 collate utf8_unicode_ci;
+create user 'ak_user'@'localhost' identified by 'akash';
+grant all privileges on ak_db.* To 'ak_user'@'localhost';
+flush privileges;
+exit
+cd /var/www/
+ls
+sudo wget https://wordpress.org/latest.tar.gz
+sudo tar -zxvf latest.tar.gz
+sudo rm latest.tar.gz
+sudo chown www-data:www-data -R wordpress/
+cd /etc/nginx/
+ls
+cd sites-available/
+sudo vim akash-singh.in.conf
+
+upstream example-php-handler {
+  server unix:/var/run/php/php7.2-fpm.sock;
+}
+server {
+  listen 80;
+  server_name akash-singh.in www.akash-singh.in;
+  root /var/www/wordpress;
+  index index.php;
+  location / {
+    try_files $uri $uri/ /index.php?$args;  
+  }
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass example-php-handler;
+  }
+}
+
+sudo ln -s /etc/nginx/sites-available/akash-singh.in.conf /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+sudo service php5-fpm restart
