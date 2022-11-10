@@ -1,0 +1,6 @@
+snap version //checking snap version 
+sudo snap install core; sudo snap refresh core // Ensure that the latest essential release of a snap is installed and tracked for updates.
+sudo snap install --classic certbot //Now, install Certbot, executing the command
+sudo ln -s /snap/bin/certbot /usr/bin/certbot // Then create the symbolic link to the Certbot directory
+sudo certbot --apache //Next, launch the Certbot to generate an SSL Certificate for your website
+//provide email address
